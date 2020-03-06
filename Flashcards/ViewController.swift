@@ -52,6 +52,33 @@ class ViewController: UIViewController {
         
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navigationController = segue.destination as! UINavigationController
+        let creationController = navigationController.topViewController as! CreationViewController
+        creationController.flashcardController = self
+        if segue.identifier == "EditSegue" {
+            creationController.initialQuestion = questionLabel.text
+            creationController.initialAnswer = answerLabel.text
+            creationController.initialAnswer1 = answerButtonOne.title(for: .normal)
+            creationController.initialAnswer2 = answerButtonTwo.title(for: .normal)
+            creationController.initialAnswer3 = answerButtonThree.title(for: .normal)
+        }
+    }
+    
+    func updateFlashcard(question: String, answer: String, answer1: String, answer2: String, answer3: String) {
+        questionLabel.text = question
+        answerLabel.text = answer
+        
+        answerButtonOne.setTitle(answer1, for: .normal)
+        answerButtonOne.isHidden = false
+        answerButtonTwo.setTitle(answer2, for: .normal)
+        answerButtonTwo.isHidden = false
+        answerButtonThree.setTitle(answer3, for: .normal)
+        answerButtonThree.isHidden = false
+        answerButtonFour.setTitle(answer, for: .normal)
+        answerButtonFour.isHidden = false
+    }
+    
     // Keeping below for added functionality, in case one wants to cheat
     @IBAction func didTapOnFlashcard(_ sender: Any) {
         // Who doesn't love a little bit of ternary?
