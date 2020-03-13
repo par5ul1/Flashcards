@@ -1,5 +1,23 @@
 ## Flashcards
 
+## Lab 3
+
+### App Description
+A simple flashcards app that can store multiple question. The user can tap on cards to reveal the answers or attempt by selecting from multiple-choice selections of buttons. The user can create a card from scratch or edit existing ones. The cards are stored locally and carry across sessions.
+
+### App Walk-though
+
+<img src="https://s5.gifyu.com/images/codepath-lab3.gif" width=200><br>
+
+## Required
+- [x] User can browse through multiple flashcards
+- [x] User can re-open the app and see previously created flashcards
+- [x] Push code to GitHub
+## Optional
+- [x] User can delete a flashcard
+- [x] User can edit existing flashcard
+- [x] User can store multiple choice questions
+
 ## Lab 2
 
 ### App Description
