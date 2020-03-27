@@ -1,5 +1,26 @@
 ## Flashcards
 
+## Lab 4
+
+### App Description
+A simple flashcards app that can store multiple question. The user can tap on cards to reveal the answers or attempt by selecting from randomly distributed multiple-choice selections of buttons. The user can create a card from scratch or edit existing ones. The cards are stored locally and carry across sessions. The app has assets, is animated and has some responsive features.
+
+### App Walk-though
+
+<img src="https://i.imgur.com/bClBqii.gifv" width=200><br>
+
+## Required
+- [x] User should see the app icon 
+- [x] User should see a splash screen
+- [x] User should see an flip animation when revealing the answer
+- [x] User should see a slide animation when going to the next flashcard
+- [x] User should see a slide animation when going to the previous flashcard
+- [x] Push code to GitHub
+## Optional
+- [x] User should see a nicer flashcard with rounded corners, shadows, and animating when showing the first time
+- [x] User should see all views properly layout when using the app on a phone of different sizes
+- [x] Correct answer in multiple choice should be random
+
 ## Lab 3
 
 ### App Description
