@@ -7,7 +7,7 @@ A simple flashcards app that can store multiple question. The user can tap on ca
 
 ### App Walk-though
 
-<img src="https://i.imgur.com/bClBqii.gifv" width=200><br>
+<img src="https://s5.gifyu.com/images/codepath-lab4.gif" width=200><br>
 
 ## Required
 - [x] User should see the app icon 
