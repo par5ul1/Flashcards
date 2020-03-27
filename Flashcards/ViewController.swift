@@ -27,11 +27,12 @@ class ViewController: UIViewController {
     @IBOutlet weak var prevButton: UIButton!
     @IBOutlet weak var nextButton: UIButton!
     @IBOutlet weak var deleteButton: UIButton!
+    @IBOutlet weak var card: UIView!
+    
+    var correctAnswerButton: UIButton!
     
     var flashcards = [Flashcard]()
     var currentIndex = 0
-    
-    @IBOutlet weak var card: UIView!
     
     override func viewDidLoad() {
         let cardCornerRadius : CGFloat = 20.0
@@ -76,16 +77,44 @@ class ViewController: UIViewController {
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        card.alpha = 0
+        card.transform = CGAffineTransform.identity.scaledBy(x: 0.75, y: 0.75)
+        answerButtonOne.alpha = 0
+        answerButtonOne.transform = CGAffineTransform.identity.scaledBy(x: 0.75, y: 0.75)
+        answerButtonTwo.alpha = 0
+        answerButtonTwo.transform = CGAffineTransform.identity.scaledBy(x: 0.75, y: 0.75)
+        answerButtonThree.alpha = 0
+        answerButtonThree.transform = CGAffineTransform.identity.scaledBy(x: 0.75, y: 0.75)
+        answerButtonFour.alpha = 0
+        answerButtonFour.transform = CGAffineTransform.identity.scaledBy(x: 0.75, y: 0.75)
+        
+        UIView.animate(withDuration: 0.6, delay: 0.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, animations: {
+            self.card.alpha = 1
+            self.card.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
+            self.answerButtonOne.alpha = 1
+            self.answerButtonOne.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
+            self.answerButtonTwo.alpha = 1
+            self.answerButtonTwo.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
+            self.answerButtonThree.alpha = 1
+            self.answerButtonThree.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
+            self.answerButtonFour.alpha = 1
+            self.answerButtonFour.transform = CGAffineTransform.identity.scaledBy(x: 1, y: 1)
+        })
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let navigationController = segue.destination as! UINavigationController
         let creationController = navigationController.topViewController as! CreationViewController
         creationController.flashcardController = self
         if segue.identifier == "EditSegue" {
             creationController.initialQuestion = questionLabel.text
-            creationController.initialAnswer = answerLabel.text
-            creationController.initialAnswer1 = answerButtonOne.title(for: .normal)
-            creationController.initialAnswer2 = answerButtonTwo.title(for: .normal)
-            creationController.initialAnswer3 = answerButtonThree.title(for: .normal)
+            creationController.initialAnswer = flashcards[currentIndex].answer
+            creationController.initialAnswer1 = flashcards[currentIndex].answer1
+            creationController.initialAnswer2 = flashcards[currentIndex].answer2
+            creationController.initialAnswer3 = flashcards[currentIndex].answer3
         }
     }
     
@@ -122,14 +151,16 @@ class ViewController: UIViewController {
         questionLabel.text = currentFlashcard.question
         answerLabel.text = currentFlashcard.answer
         
-        answerButtonOne.setTitle(currentFlashcard.answer1, for: .normal)
-        answerButtonOne.isHidden = false
-        answerButtonTwo.setTitle(currentFlashcard.answer2, for: .normal)
-        answerButtonTwo.isHidden = false
-        answerButtonThree.setTitle(currentFlashcard.answer3, for: .normal)
-        answerButtonThree.isHidden = false
-        answerButtonFour.setTitle(currentFlashcard.answer, for: .normal)
-        answerButtonFour.isHidden = false
+        let buttons = [answerButtonOne, answerButtonTwo, answerButtonThree, answerButtonFour].shuffled()
+        let answers = [currentFlashcard.answer, currentFlashcard.answer1, currentFlashcard.answer2, currentFlashcard.answer3].shuffled()
+        
+        for (button, answer) in zip(buttons, answers) {
+            button?.setTitle(answer, for: .normal)
+            button?.isEnabled = true
+            if answer == currentFlashcard.answer {
+                correctAnswerButton = button
+            }
+        }
         
     }
     
@@ -153,36 +184,95 @@ class ViewController: UIViewController {
     
     // Keeping below for added functionality, in case one wants to cheat
     @IBAction func didTapOnFlashcard(_ sender: Any) {
-        // Who doesn't love a little bit of ternary?
-        questionLabel.isHidden = questionLabel.isHidden ? false : true
+        flipFlashcard()
+    }
+    
+    func flipFlashcard() {
+        if questionLabel.isHidden {
+            UIView.transition(with: card, duration: 0.3, options: .transitionFlipFromLeft, animations: {
+                self.questionLabel.isHidden = false
+            })
+        } else {
+            UIView.transition(with: card, duration: 0.3, options: .transitionFlipFromRight, animations: {
+                self.questionLabel.isHidden = true
+            })
+        }
+    }
+    
+    func animateCardInNext() {
+        card.transform = CGAffineTransform.identity.translatedBy(x: 350, y: 0.0)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.card.transform = CGAffineTransform.identity
+        })
+    }
+    
+    func animateCardOutNext() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.card.transform = CGAffineTransform.identity.translatedBy(x: -350, y: 0.0)
+        }, completion: { finished in
+            self.updateLabels()
+            self.animateCardInNext()
+        })
+    }
+    
+    func animateCardOutPrev() {
+        card.transform = CGAffineTransform.identity.translatedBy(x: -350, y: 0.0)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.card.transform = CGAffineTransform.identity
+        })
+    }
+    
+    func animateCardInPrev() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.card.transform = CGAffineTransform.identity.translatedBy(x: 350, y: 0.0)
+        }, completion: { finished in
+            self.updateLabels()
+            self.animateCardOutPrev()
+        })
     }
     
     @IBAction func didTapButtonOne(_ sender: Any) {
-        answerButtonOne.isHidden = true
+        if answerButtonOne == correctAnswerButton {
+            flipFlashcard()
+        } else {
+            answerButtonOne.isEnabled = false
+        }
     }
     
     @IBAction func didTapButtonTwo(_ sender: Any) {
-        answerButtonTwo.isHidden = true
+        if answerButtonTwo == correctAnswerButton {
+            flipFlashcard()
+        } else {
+            answerButtonTwo.isEnabled = false
+        }
     }
     
     @IBAction func didTapButtonThree(_ sender: Any) {
-        answerButtonThree.isHidden = true
+        if answerButtonThree == correctAnswerButton {
+            flipFlashcard()
+        } else {
+            answerButtonThree.isEnabled = false
+        }
     }
 
     @IBAction func didTapButtonFour(_ sender: Any) {
-        questionLabel.isHidden = true
+        if answerButtonFour == correctAnswerButton {
+            flipFlashcard()
+        } else {
+            answerButtonFour.isEnabled = false
+        }
     }
     
     @IBAction func didTapPrevButton(_ sender: Any) {
         currentIndex -= 1
-        updateLabels()
         updateBrowseButtons()
+        animateCardInPrev()
     }
 
     @IBAction func didTapNextButton(_ sender: Any) {
         currentIndex -= -1
-        updateLabels()
         updateBrowseButtons()
+        animateCardOutNext()
     }
     
     @IBAction func didTapOnDelete(_ sender: Any) {
